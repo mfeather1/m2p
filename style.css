@@ -1,0 +1,25 @@
+a:link {color:#4B80FE}
+a:visited {color:#854ABB}
+body {
+  background-color: #38383D;
+  color: white;
+  margin-left: 10%; 
+  margin-right: 10%;
+}
+p {
+  margin:0;
+  text-align: justify; 
+}
+td { text-align: justify; }
+.btn {
+  height:28px;
+  border-radius:15px;
+  background-color:#ffffff;
+  padding:0px;
+  border:none;
+  outline:none;
+}
+.btn:active { background-color: #aaaaaa; }
+.svw1 { width:74px; }
+.svw2 { width:100px; }
+
