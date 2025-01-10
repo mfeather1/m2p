@@ -206,6 +206,7 @@ var CUBE_HOME   = "RRRRRRRRRGGGYYYBBBWWWGGGYYYBBBWWWGGGYYYBBBWWWOOOOOOOOO";
 var CUBE_BLANK  = "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL";
 var config = init_config();
 var worker;
+var time1, time2;
 main();
 function main() {
   new_worker();
@@ -244,6 +245,7 @@ function new_worker() {
   worker.addEventListener('message', ipc);
 }
 function ipc(e) {
+  time2 = Date.now();
   solve_running = 0;
   solution = e.data.solution;
   if (solution.length > 0) {
@@ -252,7 +254,7 @@ function ipc(e) {
     }
     else {
       var err = err_msg(solution[6]);
-      document.getElementById('status').innerHTML = err;
+      stat_msg(err);
       document.getElementById('status').style.textAlign = 'left';
     }
   }
@@ -331,6 +333,7 @@ function solve() {
   var s = document.getElementById('maxlen').value;
   var n = (!isNaN(s) ? Number(s) : 20);
   solve_running = 1;
+  time1 = Date.now();
   worker.postMessage({'cube':c, 'maxlen':n});
   document.getElementById('status').style.textAlign = 'left';
   if (n < 20)
@@ -339,29 +342,37 @@ function solve() {
 function show_stop_btn() {
   var b = 'Searching &nbsp; ';
   b += '<button class="btn svw1" onclick=stop_search()>Stop</button>';
-  document.getElementById('status').innerHTML = b;
+  stat_msg(b);
 }
 function stop_search() {
   worker.removeEventListener('message', ipc);
   worker.terminate();
   solve_running = 0;
-  document.getElementById('status').innerHTML = 'Search stopped';
+  stat_msg('Search stopped');
   new_worker();
 }
 function show_solution() {
   var af = cvt_to_anim(facelets);
   console.log('acjs:' + af);
-  console.log(solution);
+  var t = ((time2 - time1)/1000).toFixed(2);
+  console.log(solution + ' ' + len(solution) + ' ' + t);
+  stat_msg(t);
   var sol = solution;
   acjs_removeListeners['cube']();
   AnimCube3("&id=cube&move=" + sol + "&facelets=" + af + config);
   document.getElementById('status').style.textAlign = 'center';
   solve_running = 0;
-  clear_status();
+}
+function len(s) {
+  var a = s.split(' ');
+  for (var i=0, n=0; i < a.length; i++)
+    if (a[i] != '')
+      n++;
+  return n;
 }
 function show_cube(n) {
   if (n) {
-    clear_status();
+    stat_msg('');
     acjs_removeListeners['cube']();
   }
   var af = cvt_to_anim(facelets);
@@ -379,8 +390,8 @@ function init_config() {
   s += '&snap=1';
   return s;
 }
-function clear_status() {
-  document.getElementById('status').innerHTML = '';
+function stat_msg(s) {
+  document.getElementById('status').innerHTML = s;
 }
 </script>
 </center>
