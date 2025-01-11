@@ -254,7 +254,10 @@ function ipc(e) {
     }
     else {
       var err = err_msg(solution[6]);
-      stat_msg(err);
+      var t = ((time2 - time1)/1000).toFixed(2);
+      var s = err + ' (' + t +')';
+      stat_msg(s);
+      console.log(s);
       document.getElementById('status').style.textAlign = 'left';
     }
   }
