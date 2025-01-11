@@ -1405,6 +1405,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 
 if (typeof window == 'undefined') {
   var search = new min2phase.Search();
+  min2phase.initFull();
   addEventListener('message', function(e) {
     var solution = search.solution(e.data.cube, e.data.maxlen);
     postMessage({'solution': solution});
