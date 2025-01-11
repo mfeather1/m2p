@@ -254,10 +254,14 @@ function ipc(e) {
     }
     else {
       var err = err_msg(solution[6]);
-      var t = ((time2 - time1)/1000).toFixed(2);
-      var s = err + ' (' + t +')';
-      stat_msg(s);
-      console.log(s);
+      if (solution[6] < 7)
+        stat_msg(err);
+      else {
+        var t = ((time2 - time1)/1000).toFixed(2);
+        var s = err + ' (' + t +')';
+        stat_msg(s);
+        console.log(s);
+      }
       document.getElementById('status').style.textAlign = 'left';
     }
   }
@@ -312,9 +316,6 @@ function rand() {
     return;
   var r = min2phase.randomCube();
   facelets = cvt_from_m2p(r);
-  console.log('m2p:  ' + r);
-  console.log('text: ' + facelets);
-  console.log('acjs: ' + cvt_to_anim(facelets));
   update_layout();
   show_cube(1);
 }
@@ -357,6 +358,9 @@ function stop_search() {
 }
 function show_solution() {
   var af = cvt_to_anim(facelets);
+  console.log('text: ' + facelets);
+  console.log('acjs: ' + af);
+  console.log('m2p:  ' + cvt_to_m2p(facelets));
   var t = ((time2 - time1)/1000).toFixed(2);
   var v = len(solution);
   var l = v[0];
