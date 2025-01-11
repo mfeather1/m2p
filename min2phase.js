@@ -722,7 +722,6 @@ var min2phase = (function() {
 		}
 		return this.moveSol == null ? "Error 7" : this.moveSol;
 	}
-
 	Search.prototype.initPhase2Pre = function() {
 		this.isRec = false;
 		if (this.probe >= (this.moveSol == null ? this.probeMax : this.probeMin)) {
@@ -920,11 +919,17 @@ var min2phase = (function() {
 		var urf = (this.verbose & INVERSE_SOLUTION) != 0 ? (this.urfIdx + 3) % 6 : this.urfIdx;
 		if (urf < 3) {
 			for (var s = 0; s < this.moveSol.length; ++s) {
+				if (s == this.depth1) {
+					sb += ".  ";
+				}
 				sb += move2str[urfMove[urf][this.moveSol[s]]] + ' ';
 			}
 		} else {
 			for (var s = this.moveSol.length - 1; s >= 0; --s) {
 				sb += move2str[urfMove[urf][this.moveSol[s]]] + ' ';
+				if (s == this.depth1) {
+					sb += ".  ";
+				}
 			}
 		}
 		return sb;

@@ -355,11 +355,16 @@ function stop_search() {
 function show_solution() {
   var af = cvt_to_anim(facelets);
   var t = ((time2 - time1)/1000).toFixed(2);
-  var l = len(solution);
-  var s = solution + '(' + l + 'f) ' + t;
+  var v = len(solution);
+  var l = v[0];
+  var d = v[1];
+  var ds1 = d + '+' + (l-d);
+  var ds2 = '[' + ds1 + '] ';
+  var ls = '(' + l + 'f) '
+  var s = solution + ds2 + ls + t;
+  stat_msg(t + ' &nbsp; ' + ds1);
   console.log(s);
-  stat_msg(t);
-  var sol = solution;
+  var sol = solution.replace('.', '');
   acjs_removeListeners['cube']();
   AnimCube3("&id=cube&move=" + sol + "&facelets=" + af + config);
   document.getElementById('status').style.textAlign = 'center';
@@ -367,10 +372,13 @@ function show_solution() {
 }
 function len(s) {
   var a = s.split(' ');
-  for (var i=0, n=0; i < a.length; i++)
-    if (a[i] != '')
+  for (var i=0, d=0, n=0; i < a.length; i++) {
+    if (a[i] == '.')
+      d = n;
+    else if (a[i] != '')
       n++;
-  return n;
+  }
+  return [n, d];
 }
 function show_cube(n) {
   if (n) {
