@@ -269,9 +269,9 @@ function ipc(e) {
 function err_msg(n) {
   var s;
   if      (n == 1) s = 'Invalid config';
-  else if (n == 2) s = 'Missing edges';
+  else if (n == 2) s = 'Invalid config';
   else if (n == 3) s = 'Flipped edge';
-  else if (n == 4) s = 'Missing corners';
+  else if (n == 4) s = 'Invalid config (4)';
   else if (n == 5) s = 'Twisted corner';
   else if (n == 6) s = 'Parity error';
   else if (n == 7) s = 'Solution not found';
