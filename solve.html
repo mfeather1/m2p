@@ -207,6 +207,7 @@ var CUBE_BLANK  = "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL";
 var config = init_config();
 var worker;
 var time1, time2;
+var count = 1;
 main();
 function main() {
   new_worker();
@@ -353,7 +354,11 @@ function stop_search() {
   worker.removeEventListener('message', ipc);
   worker.terminate();
   solve_running = 0;
-  stat_msg('Search stopped');
+  console.log(count++ + ' ' + facelets);
+  var t = ((Date.now() - time1)/1000).toFixed(2);
+  var s = 'Search stopped (' + t + ')';
+  stat_msg(s);
+  console.log(s);
   new_worker();
 }
 function show_solution() {
@@ -361,7 +366,7 @@ function show_solution() {
   // console.log('text: ' + facelets);
   // console.log('acjs: ' + af);
   // console.log('m2p:  ' + cvt_to_m2p(facelets));
-  console.log(facelets);
+  console.log(count++ + ' ' + facelets);
   var t = ((time2 - time1)/1000).toFixed(2);
   var v = len(solution);
   var l = v[0];
