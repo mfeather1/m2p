@@ -198,7 +198,7 @@ var color;
 var style;
 var facelets;
 var facelets_arr = [];
-var cloze = 0;
+var back = 0;
 var solution = [];
 var acjs_removeListeners = [];
 var solve_running = 0;
@@ -217,10 +217,12 @@ function main() {
     if (typeof(p[1]) != 'undefined')
       window[p[0]] = p[1];
   }
+  console.log(location.href);
+  if (location.href.indexOf('3ColorCube') > 0)
+    back = 1;
   if (typeof(facelets) == 'undefined')
     facelets = CUBE_HOME;
   else {
-    cloze = 1;
     if (facelets.length > 54)
       facelets = facelets.substr(0,54);
     if (facelets.length < 54)
@@ -236,9 +238,7 @@ function main() {
   }
   update_layout();
   show_cube(0);
-  if (cloze == 1)
-    document.getElementById('back').innerHTML = '<a href="JavaScript:window.close()">Close</a>';
-  else 
+  if (back == 1)
     document.getElementById('back').innerHTML = '<a href="javascript: history.go(-1)">Back</a>';
 }
 function new_worker() {
