@@ -106,3 +106,41 @@ function exitFullscreenFunc() {
   else if (document.msExitFullscreen)
     document.msExitFullscreen();
 }
+function animcube_params() {
+  var p = '';
+  if (typeof align != 'undefined')         p += '&align=' + align;
+  if (typeof bgcolor != 'undefined')       p += '&bgcolor=' + bgcolor;
+  if (typeof borderwidth != 'undefined')   p += '&borderwidth=' + borderwidth;
+  if (typeof butbgcolor != 'undefined')    p += '&butbgcolor=' + butbgcolor;
+  if (typeof buttonheight != 'undefined')  p += '&buttonheight=' + buttonheight;
+  if (typeof clickprogress != 'undefined') p += '&clickprogress=' + clickprogress;
+  if (typeof counter != 'undefined')       p += '&counter=' + counter;
+  if (typeof cubecolor != 'undefined')     p += '&cubecolor=' + cubecolor;
+  if (typeof doublespeed != 'undefined')   p += '&doublespeed=' + doublespeed;
+  if (typeof edit != 'undefined')          p += '&edit=' + edit;
+  if (typeof fonttype != 'undefined')      p += '&fonttype=' + fonttype;
+  if (typeof hint != 'undefined')          p += '&hint=' + hint;
+  if (typeof hintborder != 'undefined')    p += '&hintborder=' + hintborder;
+  if (typeof hinthoriz != 'undefined')     p += '&hinthoriz=' + hinthoriz;
+  if (typeof hintvert != 'undefined')      p += '&hintvert=' + hintvert;
+  if (typeof metric != 'undefined')        p += '&metric=' + metric;
+  if (typeof movetext != 'undefined')      p += '&movetext=' + movetext;
+  if (typeof movetextspace != 'undefined') p += '&movetextspace=' + movetextspace;
+  if (typeof perspective != 'undefined')   p += '&perspective=' + perspective;
+  if (typeof position != 'undefined')      p += '&position=' + position;
+  if (typeof repeat != 'undefined')        p += '&repeat=' + repeat;
+  if (typeof scale != 'undefined')         p += '&scale=' + scale;
+  if (typeof slidercolor != 'undefined')   p += '&slidercolor=' + slidercolor;
+  if (typeof snap != 'undefined')          p += '&snap=' + snap;
+  if (typeof speed != 'undefined')         p += '&speed=' + speed;
+  if (typeof textsize != 'undefined')      p += '&textsize=' + textsize;
+  if (typeof troughcolor != 'undefined')   p += '&troughcolor=' + troughcolor;
+  if (typeof yz != 'undefined')            p += '&yz=' + yz;
+  return p;
+  /* these params are not allowed:
+     buttonbar, colorscheme, colors, config, demo, facelets, 
+     gabbacolors, initmove, initrevmove, move, pos, randmoves,
+     scramble, scw, supercube, superfacelets
+  */
+}
+
