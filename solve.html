@@ -188,9 +188,8 @@
 </td>
 </tr><tr height=8></tr></table>
 Powered by <a target=_blank href=https://github.com/cs0x7f/min2phase.js>min2phase.js</a>
-by Shuang Chen.
-<br><br>
-<div id=back> </div>
+by Shuang Chen.<br>
+<div id=back></div>
 <br><br>
 <script>
 "use strict";
@@ -217,8 +216,7 @@ function main() {
     if (typeof(p[1]) != 'undefined')
       window[p[0]] = p[1];
   }
-  console.log(location.href);
-  if (location.href.indexOf('3ColorCube') > 0)
+  if (document.referrer.indexOf('3ColorCube') > 0)
     back = 1;
   if (typeof(facelets) == 'undefined')
     facelets = CUBE_HOME;
@@ -238,8 +236,10 @@ function main() {
   }
   update_layout();
   show_cube(0);
-  if (back == 1)
-    document.getElementById('back').innerHTML = '<a href="javascript: history.go(-1)">Back</a>';
+  if (back == 1) {
+    var s = '<br><a href="javascript: history.go(-1)">Back</a>';
+    document.getElementById('back').innerHTML = s;
+  }
 }
 function new_worker() {
   worker = new Worker('min2phase.js');
