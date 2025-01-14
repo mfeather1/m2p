@@ -1,6 +1,13 @@
 <!doctype html>
 <script src=min2phase.js></script>
 <body>
+<font size=+2>Min2Phase Batch Solver</font>
+<br><br>
+For examples use:<br>
+FRRBULLDBRFFURRLBDULUBFFFRUDBBDDDBRBULFULUDFLDDRFBLRUL<br>
+BUBFUDDLRFFUBRFRDUFDULFUBRDUBBDDBFLLLRRRLBLRLRLDUBUFFD<br>
+BRBDUDRFFRRULRFLFFFDDRFDBLBUBDUDLLUUDBURLUDBLRFRUBBLLF
+<br><br>
 <textarea id=t1 style=width:600px;height:200px></textarea>
 <br><br>
 <button onclick=solve()>Solve</button>
@@ -15,8 +22,10 @@ function solve() {
   var cubes = txt.split('\n')
   for (var i=0, a=''; i < cubes.length; i++)  {
     var c = cubes[i].trim();
-    var s = search.solution(c, 20);
-    a += (i+1) + ' ' + c + '<br>' + s + '<br><br>';
+    if (c.length > 0) {
+      var s = search.solution(c, 20);
+      a += (i+1) + ' ' + c + '<br>' + s + '<br><br>';
+    }
   }
   document.getElementById('d1').innerHTML = a;
 }
