@@ -138,9 +138,9 @@ function animcube_params() {
   if (typeof yz != 'undefined')            p += '&yz=' + yz;
   return p;
   /* these params are not allowed:
-     buttonbar, colorscheme, colors, config, demo, facelets, 
-     gabbacolors, initmove, initrevmove, move, pos, randmoves,
-     scramble, scw, supercube, superfacelets
+     buttonbar, colorscheme, colors, config, demo, gabbacolors,
+     initmove, initrevmove, move, pos, randmoves, scramble, scw,
+     supercube, superfacelets
   */
 }
 
