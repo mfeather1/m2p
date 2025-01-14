@@ -1,20 +1,24 @@
 <!doctype html>
 <script src=min2phase.js></script>
 <body>
+<textarea id=t1 style=width:600px;height:200px></textarea>
+<br><br>
+<button onclick=solve()>Solve</button>
+<br><br>
 <div id=d1></div>
 </body>
 <script>
-var cubes = [
-'FRRBULLDBRFFURRLBDULUBFFFRUDBBDDDBRBULFULUDFLDDRFBLRUL',
-'BUBFUDDLRFFUBRFRDUFDULFUBRDUBBDDBFLLLRRRLBLRLRLDUBUFFD',
-'BRBDUDRFFRRULRFLFFFDDRFDBLBUBDUDLLUUDBURLUDBLRFRUBBLLF'];
 var search = new min2phase.Search();
 min2phase.initFull();
-for (var i=0, a=''; i < cubes.length; i++)  {
-  var c = cubes[i];
-  var s = search.solution(c, 20);
-  a += (i+1) + ' ' + c + '<br>' + s + '<br><br>';
+function solve() {
+  var txt = document.getElementById('t1').value;
+  var cubes = txt.split('\n')
+  for (var i=0, a=''; i < cubes.length; i++)  {
+    var c = cubes[i].trim();
+    var s = search.solution(c, 20);
+    a += (i+1) + ' ' + c + '<br>' + s + '<br><br>';
+  }
+  document.getElementById('d1').innerHTML = a;
 }
-document.getElementById('d1').innerHTML = a;
 </script>
 </html>
