@@ -379,8 +379,10 @@ function show_solution() {
   console.log(s);
   var sol = solution.replace('.', '');
   var ap = animcube_params();
+  if (ap != '')
+    af += ap;
   acjs_removeListeners['cube']();
-  AnimCube3("&id=cube&move=" + sol + "&facelets=" + af + config + ap);
+  AnimCube3('&id=cube' + config + '&move=' + sol + "&facelets=" + af);
   document.getElementById('status').style.textAlign = 'center';
   solve_running = 0;
 }
@@ -401,7 +403,9 @@ function show_cube(n) {
   }
   var af = cvt_to_anim(facelets);
   var ap = animcube_params();
-  AnimCube3("&id=cube&facelets=" + af + config + ap);
+  if (ap != '')
+    af += ap;
+  AnimCube3('&id=cube' + config + "&facelets=" + af);
 }
 function init_config() {
   var s = '&fonttype=0';
