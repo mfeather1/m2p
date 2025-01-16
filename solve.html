@@ -246,7 +246,7 @@ function main() {
   }
 }
 function new_worker() {
-  worker = new Worker('min2phase.js');
+  worker = new Worker('min2phase_mod.js');
   worker.addEventListener('message', ipc);
 }
 function ipc(e) {

@@ -1397,12 +1397,3 @@ var min2phase = (function() {
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 	module.exports = min2phase;
 }
-
-if (typeof window == 'undefined') {
-  min2phase.initFull();
-  var search = new min2phase.Search();
-  addEventListener('message', function(e) {
-    var solution = search.solution(e.data.cube, e.data.maxlen);
-    postMessage({'solution': solution});
-  });
-}
