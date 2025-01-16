@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+ <script src=AnimCube3.js></script>
+ <script src=min2phase.js></script>
+ <script src=rclib.js></script>
+ <script src=moves.js></script>
+</head>
+<body>
+<center>
+<font size=+2>Each sequence makes the other cube</font>
+<br><br>
+<table>
+ <tr>
+  <td><div id=c1 style=width:240px;height:240px></div></td>
+  <td width=30>
+  <td><div id=c2 style=width:240px;height:240px></div></td>
+ </tr>
+</table>
+<script>
+main();
+function main() {
+  var h='RRRRRRRRRGGGYYYBBBWWWGGGYYYBBBWWWGGGYYYBBBWWWOOOOOOOOO';
+  min2phase.initFull();
+  var search = new min2phase.Search();
+  var r1 = min2phase.randomCube();
+  var r2 = min2phase.randomCube();
+  var s1 = search.solution(r1, 20);
+  var s2 = search.solution(r2, 20);
+  var c1 = do_moves(h, s2 + inv(s1));
+  var c2 = do_moves(h, s1 + inv(s2));
+  var s3 = search.solution(cvt_to_m2p(c1), 20);
+  var s4 = search.solution(cvt_to_m2p(c2), 20);
+  var f1 = cvt_to_anim(cvt_from_m2p(r1));
+  var f2 = cvt_to_anim(cvt_from_m2p(r2));
+  AnimCube3('id=c1&movetext=1&facelets=' + f1 + '&move=' + s3);
+  AnimCube3('id=c2&movetext=1&facelets=' + f2 + '&move=' + s4);
+}
+function inv(s) {
+  var a = s.split(' ').reverse();
+  for (var i=0; i < a.length; i++) {
+     var mv = a[i];
+     if (mv.length == 1)
+       a[i] += "'";
+     else if (mv[1] != 2)
+       a[i] = mv[0];
+  }
+  return a.join(' ');
+}
+</script>
+</center>
+</body>
+</html>
