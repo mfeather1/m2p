@@ -153,15 +153,15 @@ function show_log() {
   var fse = getFullscreenElement();
   var title = 'Solve Log:';
   if (!(typeof fse == 'undefined' || fse == null)) {
-    var s = '<style>\n';
-    s += ' .btn {height:28px; width:100px; border-radius:15px;\n';
-    s += '   background:white; padding:0px; border:none}\n';
-    s += '</style>\n';
-    s += '<br>' + title + '<br>\n';
+    var s = `<style>
+    .btn {height:28px; width:100px; border-radius:15px;
+          background:white; padding:0px; border:none}
+    </style><br>`
+    s += title + '<br>';
     for (var i=0; i < logtxt.length; i++)
       s += logtxt[i] + '\n';
-    s += '<button class=btn onclick="exitFullScreen()">Back</button>\n';
-    s += '<br><br><br>\n';
+    s += '<button class=btn onclick="exitFullScreen()">Back</button>';
+    s += '<br><br><br>';
     logdiv = document.createElement('div'); 
     logdiv.id = 'log';
     logdiv.style.overflow = 'auto';
@@ -176,27 +176,22 @@ function show_log() {
     if (typeof(logwin) != 'undefined')
       logwin.close();
     logwin = window.open('', 'rc_solve_log');
-    logwin.document.write('<!doctype html>\n');
-    logwin.document.write('<html>\n');
-    logwin.document.write('<head>\n');
-    logwin.document.write('<meta name=viewport\n');
-    logwin.document.write('  content="width=device-width, initial-scale=1">\n');
-    logwin.document.write('<style>\n');
-    logwin.document.write(' body {color:white; background-color:#38383D;\n');
-    logwin.document.write('   margin-left:10%; margin-right:10%}\n');
-    logwin.document.write(' .btn {height:28px; width:100px; border-radius:15px;\n');
-    logwin.document.write('   background:white; padding:0px; border:none;}\n');
-    logwin.document.write('</style>\n');
-    logwin.document.write('</head>\n');
-    logwin.document.write('<body >\n');
-    logwin.document.write('<br>' + title + '<br>\n');
+    var s = `<!doctype html>
+    <html><head>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <style>
+      body {color:white; background-color:#38383D;
+      margin-left:10%; margin-right:10%}
+      .btn {height:28px; width:100px; border-radius:15px;
+            background:white; padding:0px; border:none;}
+    </style>
+    </head><body><br>`;
+    s += title + '<br>';
     for (var i=0; i < logtxt.length; i++)
-      logwin.document.write(logtxt[i] + '\n');
-    logwin.document.write('<button class=btn\n');
-    logwin.document.write('  onclick="window.close()">Close</button>\n');
-    logwin.document.write('<br><br>\n');
-    logwin.document.write('</body>\n');
-    logwin.document.write('</html>\n');
+      s += logtxt[i] + '\n';
+    s += `<button class=btn onclick="window.close()">Close</button>
+          <br><br></body></html>`;
+    logwin.document.write(s);
     logwin.document.title = title;
     logwin.document.close();
   }
