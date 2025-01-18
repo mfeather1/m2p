@@ -266,7 +266,7 @@ function ipc(e) {
         var t = ((time2 - time1)/1000).toFixed(2);
         var s = err + ' (' + t +')';
         stat_msg(s);
-        console.log(s);
+        mconsole(s);
       }
       document.getElementById('status').style.textAlign = 'left';
     }
@@ -361,19 +361,19 @@ function stop_search() {
   worker.terminate();
   solve_running = 0;
   var t = ((Date.now() - time1)/1000).toFixed(2);
-  // console.log(count++ + ' ' + facelets);
+  // mconsole(count++ + ' ' + facelets);
   // var s = 'Search stopped (' + t + ')';
   var s = 'Search stopped';
   stat_msg(s);
-  // console.log(s);
+  // mconsole(s);
   new_worker();
 }
 function show_solution() {
   var af = cvt_to_anim(facelets);
-  // console.log('text: ' + facelets);
-  // console.log('acjs: ' + af);
-  // console.log('m2p:  ' + cvt_to_m2p(facelets));
-  // console.log(count++ + ' ' + facelets);
+  // mconsole('text: ' + facelets);
+  // mconsole('acjs: ' + af);
+  // mconsole('m2p:  ' + cvt_to_m2p(facelets));
+  // mconsole(count++ + ' ' + facelets);
   show_cube_layout(facelets, logtxt);
   var t = ((time2 - time1)/1000).toFixed(2);
   var len = get_len(solution);
@@ -385,14 +385,14 @@ function show_solution() {
     var sol = solution.replace(/  /g, ' ')
     var ds2 = '[' + ds1 + '] ';
     s = sol + ds2 + ls + t;
-    console.log(count++, s);
+    mconsole(count++ + ' ' + s);
     logtxt.push(s);
   }
   else {
     stat_msg(log_btn() + t);
     var sol = solution.replace('.  ', '').replace(/  /g, ' ');
     s = sol + ls + t;
-    console.log(count++, s);
+    mconsole(count++ + ' ' + s);
     logtxt.push(s);
   }
   logtxt.push('<br><br>');

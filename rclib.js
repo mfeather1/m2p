@@ -212,4 +212,8 @@ function show_cube_layout(s, l) {
   l.push('    ' + s[51] + s[52] + s[53]);
   l.push('</pre>');
 }
-
+var mlog = [];
+function mconsole(s) {
+  mlog.push(s);
+  setTimeout(console.log.bind(console, s));
+}
