@@ -65,14 +65,19 @@ function color_str(c) {
   else if (c == "G") return "green";
   else if (c == "L") return "lightgray";
 }
+var fs = 0;
 function fullScreen(e) {
   if (typeof e.target.type != 'undefined')
     return;
   var fse = getFullscreenElement();
-  if (typeof fse == 'undefined' || fse == null)
+  if (typeof fse == 'undefined' || fse == null) {
+    fs = 1;
     requestFullscreenFunc(document.body);
-  else
+  }
+  else {
+    fs = 0;
     exitFullscreenFunc();
+  }
 }
 function exitFullScreen() {
   exitFullscreenFunc();
@@ -143,4 +148,72 @@ function animcube_params() {
      supercube, superfacelets
   */
 }
-
+var logdiv;
+function show_log() { 
+  var fse = getFullscreenElement();
+  var title = 'Solve Log:';
+  if (!(typeof fse == 'undefined' || fse == null)) {
+    var s = '<style>\n';
+    s += ' .btn {height:28px; width:100px; border-radius:15px;\n';
+    s += '   background:white; padding:0px; border:none}\n';
+    s += '</style>\n';
+    s += '<br>' + title + '<br>\n';
+    for (var i=0; i < logtxt.length; i++)
+      s += logtxt[i] + '\n';
+    s += '<button class=btn onclick="exitFullScreen()">Back</button>\n';
+    s += '<br><br><br>\n';
+    logdiv = document.createElement('div'); 
+    logdiv.id = 'log';
+    logdiv.style.overflow = 'auto';
+    logdiv.style.paddingLeft = '10%';
+    logdiv.style.backgroundColor = '#38383D';
+    logdiv.style.textAlign = 'left';
+    document.body.appendChild(logdiv);
+    logdiv.innerHTML = s;
+    requestFullscreenFunc(logdiv);
+  } 
+  else {
+    if (typeof(logwin) != 'undefined')
+      logwin.close();
+    logwin = window.open('', 'rc_solve_log');
+    logwin.document.write('<!doctype html>\n');
+    logwin.document.write('<html>\n');
+    logwin.document.write('<head>\n');
+    logwin.document.write('<meta name=viewport\n');
+    logwin.document.write('  content="width=device-width, initial-scale=1">\n');
+    logwin.document.write('<style>\n');
+    logwin.document.write(' body {color:white; background-color:#38383D;\n');
+    logwin.document.write('   margin-left:10%; margin-right:10%}\n');
+    logwin.document.write(' .btn {height:28px; width:100px; border-radius:15px;\n');
+    logwin.document.write('   background:white; padding:0px; border:none;}\n');
+    logwin.document.write('</style>\n');
+    logwin.document.write('</head>\n');
+    logwin.document.write('<body >\n');
+    logwin.document.write('<br>' + title + '<br>\n');
+    for (var i=0; i < logtxt.length; i++)
+      logwin.document.write(logtxt[i] + '\n');
+    logwin.document.write('<button class=btn\n');
+    logwin.document.write('  onclick="window.close()">Close</button>\n');
+    logwin.document.write('<br><br>\n');
+    logwin.document.write('</body>\n');
+    logwin.document.write('</html>\n');
+    logwin.document.title = title;
+    logwin.document.close();
+  }
+}
+function show_cube_layout(s) {
+  logtxt.push('<pre>');
+  logtxt.push('    ' + s[0] + s[1] + s[2]);
+  logtxt.push('    ' + s[3] + s[4] + s[5]);
+  logtxt.push('    ' + s[6] + s[7] + s[8]);
+  logtxt.push(s[9]  + s[10] + s[11] + ' ' + s[12] + s[13] + s[14] + ' ' + 
+                      s[15] + s[16] + s[17] + ' ' + s[18] + s[19] + s[20]);
+  logtxt.push(s[21] + s[22] + s[23] + ' ' + s[24] + s[25] + s[26] + ' ' +
+                      s[27] + s[28] + s[29] + ' ' + s[30] + s[31] + s[32]);
+  logtxt.push(s[33] + s[34] + s[35] + ' ' + s[36] + s[37] + s[38] + ' ' +
+                      s[39] + s[40] + s[41] + ' ' + s[42] + s[43] + s[44]);
+  logtxt.push('    ' + s[45] + s[46] + s[47]);
+  logtxt.push('    ' + s[48] + s[49] + s[50]);
+  logtxt.push('    ' + s[51] + s[52] + s[53]);
+  logtxt.push('</pre>');
+}

@@ -205,6 +205,7 @@ var back = 0;
 var solution = [];
 var acjs_removeListeners = [];
 var solve_running = 0;
+var logtxt = [];
 var CUBE_HOME   = "RRRRRRRRRGGGYYYBBBWWWGGGYYYBBBWWWGGGYYYBBBWWWOOOOOOOOO";
 var CUBE_BLANK  = "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL";
 var config = init_config();
@@ -344,6 +345,7 @@ function solve() {
   var n = (!isNaN(s) ? Number(s) : 20);
   solve_running = 1;
   time1 = Date.now();
+  logtxt.length = 0;
   worker.postMessage({'cube':c, 'maxlen':n});
   document.getElementById('status').style.textAlign = 'left';
   if (n < 20)
@@ -371,22 +373,29 @@ function show_solution() {
   // console.log('acjs: ' + af);
   // console.log('m2p:  ' + cvt_to_m2p(facelets));
   console.log(count++ + ' ' + facelets);
+  show_cube_layout(facelets);
+  // logtxt.push(facelets + '<br>');
   var t = ((time2 - time1)/1000).toFixed(2);
   var len = get_len(solution);
   var ls = '(' + len[2] + 'f) '
   if (show_depths == 1) {
     var ds1 = len[0] + '+' + len[1];
-    stat_msg(t + ' &nbsp; ' + ds1);
+    var s = t + ' &nbsp; ' + ds1;
+    stat_msg(log_btn() + s);
     var sol = solution.replace(/  /g, ' ')
     var ds2 = '[' + ds1 + '] ';
-    var s = sol + ds2 + ls + t;
+    s = sol + ds2 + ls + t;
     console.log(s);
+    logtxt.push(s);
   }
   else {
-    stat_msg(t);
+    stat_msg(log_btn() + t);
     var sol = solution.replace('.  ', '').replace(/  /g, ' ');
-    console.log(sol + ls);
+    s = sol + ls + t;
+    console.log(s);
+    logtxt.push(s);
   }
+  logtxt.push('<br><br>');
   var ap = animcube_params();
   if (ap != '')
     af += ap;
@@ -394,6 +403,11 @@ function show_solution() {
   AnimCube3('&id=cube' + config + '&move=' + sol + "&facelets=" + af);
   document.getElementById('status').style.textAlign = 'center';
   solve_running = 0;
+}
+function log_btn() {
+  var s= '<button class="btn svw3" style=margin-bottom:12px';
+  s += ' onclick=show_log()>Show Log</button><br>';
+  return s;
 }
 function get_len(s) {
   var a = s.split(' ');
