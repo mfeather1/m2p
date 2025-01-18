@@ -196,19 +196,20 @@ function show_log() {
     logwin.document.close();
   }
 }
-function show_cube_layout(s) {
-  logtxt.push('<pre>');
-  logtxt.push('    ' + s[0] + s[1] + s[2]);
-  logtxt.push('    ' + s[3] + s[4] + s[5]);
-  logtxt.push('    ' + s[6] + s[7] + s[8]);
-  logtxt.push(s[9]  + s[10] + s[11] + ' ' + s[12] + s[13] + s[14] + ' ' + 
-                      s[15] + s[16] + s[17] + ' ' + s[18] + s[19] + s[20]);
-  logtxt.push(s[21] + s[22] + s[23] + ' ' + s[24] + s[25] + s[26] + ' ' +
-                      s[27] + s[28] + s[29] + ' ' + s[30] + s[31] + s[32]);
-  logtxt.push(s[33] + s[34] + s[35] + ' ' + s[36] + s[37] + s[38] + ' ' +
-                      s[39] + s[40] + s[41] + ' ' + s[42] + s[43] + s[44]);
-  logtxt.push('    ' + s[45] + s[46] + s[47]);
-  logtxt.push('    ' + s[48] + s[49] + s[50]);
-  logtxt.push('    ' + s[51] + s[52] + s[53]);
-  logtxt.push('</pre>');
+function show_cube_layout(s, l) {
+  l.push('<pre>');
+  l.push('    ' + s[0] + s[1] + s[2]);
+  l.push('    ' + s[3] + s[4] + s[5]);
+  l.push('    ' + s[6] + s[7] + s[8]);
+  l.push(s[9]  + s[10] + s[11] + ' ' + s[12] + s[13] + s[14] + ' ' + 
+                 s[15] + s[16] + s[17] + ' ' + s[18] + s[19] + s[20]);
+  l.push(s[21] + s[22] + s[23] + ' ' + s[24] + s[25] + s[26] + ' ' +
+                 s[27] + s[28] + s[29] + ' ' + s[30] + s[31] + s[32]);
+  l.push(s[33] + s[34] + s[35] + ' ' + s[36] + s[37] + s[38] + ' ' +
+                 s[39] + s[40] + s[41] + ' ' + s[42] + s[43] + s[44]);
+  l.push('    ' + s[45] + s[46] + s[47]);
+  l.push('    ' + s[48] + s[49] + s[50]);
+  l.push('    ' + s[51] + s[52] + s[53]);
+  l.push('</pre>');
 }
+
