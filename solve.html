@@ -13,7 +13,8 @@
  <style>
   html, body {
     overflow:auto;
-    /* height:100%; */
+    height:100vh;
+    height:100dvh;
     background-color:#38383D;
   }
   body {
@@ -210,6 +211,7 @@ var config = init_config();
 var worker;
 var time1, time2;
 var count = 1;
+var show_depths = 0;
 main();
 function main() {
   new_worker();
@@ -370,16 +372,21 @@ function show_solution() {
   // console.log('m2p:  ' + cvt_to_m2p(facelets));
   console.log(count++ + ' ' + facelets);
   var t = ((time2 - time1)/1000).toFixed(2);
-  var v = len(solution);
-  var l = v[0];
-  var d = v[1];
-  var ds1 = d + '+' + (l-d);
-  var ds2 = '[' + ds1 + '] ';
-  var ls = '(' + l + 'f) '
-  var s = solution + ds2 + ls + t;
-  stat_msg(t + ' &nbsp; ' + ds1);
-  console.log(s);
-  var sol = solution.replace('.', '');
+  var len = get_len(solution);
+  var ls = '(' + len[2] + 'f) '
+  if (show_depths == 1) {
+    var ds1 = len[0] + '+' + len[1];
+    stat_msg(t + ' &nbsp; ' + ds1);
+    var sol = solution.replace(/  /g, ' ')
+    var ds2 = '[' + ds1 + '] ';
+    var s = sol + ds2 + ls + t;
+    console.log(s);
+  }
+  else {
+    stat_msg(t);
+    var sol = solution.replace('.  ', '').replace(/  /g, ' ');
+    console.log(sol + ls);
+  }
   var ap = animcube_params();
   if (ap != '')
     af += ap;
@@ -388,7 +395,7 @@ function show_solution() {
   document.getElementById('status').style.textAlign = 'center';
   solve_running = 0;
 }
-function len(s) {
+function get_len(s) {
   var a = s.split(' ');
   for (var i=0, d=0, n=0; i < a.length; i++) {
     if (a[i] == '.')
@@ -396,7 +403,7 @@ function len(s) {
     else if (a[i] != '')
       n++;
   }
-  return [n, d];
+  return [d, n-d, n];
 }
 function show_cube(n) {
   if (n) {
