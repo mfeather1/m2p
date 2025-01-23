@@ -378,19 +378,18 @@ function show_solution() {
   var t = ((time2 - time1)/1000).toFixed(2);
   var len = get_len(solution);
   var ls = '(' + len[2] + 'f) '
+  var sol = solution.replace('.  ', '').replace(/  /g, ' ');
   if (show_depths == 1) {
     var ds1 = len[0] + '+' + len[1];
     var s = t + ' &nbsp; ' + ds1;
     stat_msg(log_btn() + s);
-    var sol = solution.replace(/  /g, ' ')
     var ds2 = '[' + ds1 + '] ';
-    s = sol + ds2 + ls + t;
+    s = solution + ds2 + ls + t;
     mconsole(count++ + ' ' + s);
     logtxt.push(s);
   }
   else {
     stat_msg(log_btn() + t);
-    var sol = solution.replace('.  ', '').replace(/  /g, ' ');
     s = sol + ls + t;
     mconsole(count++ + ' ' + s);
     logtxt.push(s);
