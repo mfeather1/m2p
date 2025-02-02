@@ -348,8 +348,7 @@ function solve() {
   logtxt.length = 0;
   worker.postMessage({'cube':c, 'maxlen':n});
   document.getElementById('status').style.textAlign = 'left';
-  if (n < 20)
-    show_stop_btn();
+  show_stop_btn();
 }
 function show_stop_btn() {
   var b = 'Searching &nbsp; ';
