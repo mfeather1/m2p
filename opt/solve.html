@@ -1,0 +1,693 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<link rel="icon" href="../mini_cube.png">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Optimal Solver - Powered by Chen Shuang's cubeopt-wasm</title>
+	<script type="text/javascript" src="js/jquery351.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap462.min.js"></script>
+	<script type="text/javascript" src=coi-serviceworker.js></script>
+	<script type="text/javascript">
+
+		let is_busy = false;
+		let ret_code = 1;
+		let cur_solver = null;
+
+		const worker = new Worker('wasm-worker.js');
+
+		worker.onmessage = (e) => {
+			e = e.data;
+			if (e.code == -1) { // log
+				animcube_log_handler(e);
+				$('#logs').val($('#logs').val() + e.data.trim() + '\n').scrollTop($('#logs')[0].scrollHeight);
+				console.log('[wasm log]', e.data.trim());
+				let m = /handled (\d+)%,/.exec(e.data.trim());
+				if (m) {
+					$('#busyProgress').show();
+					$('#busyProgressBar').css('width', m[1] + '%');
+				}
+				return;
+			} else if (e.code == -2) { // progress
+				$('#busyProgress').show();
+				$('#busyProgressBar').css('width', e.data * 100 + '%');
+				return;
+			}
+			if (e.code < 3) {
+				ret_code = e.code;
+				if (ret_code == 1) {
+					cur_solver = null;
+				}
+			}
+			if (e.cmd == 'select solver') {
+				if (e.code != 1) {
+					cur_solver = {
+						name: e.solver,
+						table_name: e.table_name,
+						table_size: Number(e.table_size)
+					};
+					$('#tableSize').text(solvers[e.solver][1]);
+					// $('#prun_table_name').text(e.table_name);
+				}
+			} else if (e.cmd == 'download table') {
+				if (e.code == 0) {
+					const data = new Uint8Array(e.data);
+					const blob = new Blob([data], { type: 'application/octet-stream' });
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = cur_solver.table_name;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					URL.revokeObjectURL(url);
+				}
+			} else if (e.cmd == 'upload table') {
+				if (e.code != 0) {
+					alert('Incorrect table data');
+				}
+			}
+			toggle_buttons(false);
+		}
+
+		const solvers = {
+			"cube48opt1": ["./cube48opt1.mjs", "30.4M"],
+			"cube48opt2": ["./cube48opt2.mjs", "121M"],
+			"cube48opt3": ["./cube48opt3.mjs", "243M"],
+			"cube48opt4": ["./cube48opt4.mjs", "486M"],
+			"cube48opt5": ["./cube48opt5.mjs", "972M"],
+			"cube48opt6": ["./cube48opt6.mjs", "1945M"],
+			"cube48opt7": ["./cube48opt7.mjs", "3891M"],
+			"cube48opt8": ["./cube48opt8.mjs", "7782M"],
+			"cube48opt9": ["./cube48opt9.mjs", "15565M"],
+		};
+
+		function toggle_buttons(_is_busy) {
+			is_busy = _is_busy;
+			$('#solver').prop('disabled', is_busy);
+
+			if (is_busy || ret_code == 1) { // deployed error or busy
+				$('#genTables').prop('disabled', true);
+				$('#downloadTables').prop('disabled', true).hide();
+				$('#uploadTables').prop('disabled', true).show();
+				$('#startSolve').prop('disabled', true);
+			} else if (ret_code == 2) { // not initialized
+				$('#genTables').prop('disabled', false);
+				$('#downloadTables').prop('disabled', true).hide();
+				$('#uploadTables').prop('disabled', false).show();
+				$('#startSolve').prop('disabled', true);
+				$('#busyProgress').hide();
+			} else { // initialized
+				if (init_msg) {
+					stat_msg('');
+					init_msg = 0;
+				}
+				$('#genTables').prop('disabled', true);
+				$('#downloadTables').prop('disabled', false).show();
+				$('#uploadTables').prop('disabled', true).hide();
+				$('#startSolve').prop('disabled', false);
+				$('#busyProgress').hide();
+			}
+		}
+
+		function generate_table() {
+			if (is_busy) {
+				return;
+			}
+			toggle_buttons(true);
+			worker.postMessage({ cmd: 'generate table' });
+		}
+
+		function download_table() {
+			if (is_busy) {
+				return;
+			}
+			toggle_buttons(true);
+			if (window.showSaveFilePicker) {
+				window.showSaveFilePicker({
+					suggestedName: cur_solver.table_name
+				}).then((file) => {
+					if (file.name != cur_solver.table_name) {
+						alert('file name not match, expect ' + cur_solver.table_name);
+						return Promise.reject();
+					}
+					worker.postMessage({ cmd: 'download table fileapi', data: file });
+				}).catch((e) => {
+					toggle_buttons(false);
+				});
+			} else {
+				worker.postMessage({ cmd: 'download table' });
+			}
+		}
+
+		function start_solve() {
+			if (is_busy) {
+				return;
+			}
+			let seq = cvt_fac_to_seq(facelets)
+			if (seq != 'err') {
+				toggle_buttons(true);
+				sbtn_active();
+				worker.postMessage({
+					cmd: 'start solve',
+					scramble: seq,
+					n_threads: ~~$('#n_threads').val(),
+					n_group: ~~$('#n_group').val(),
+					debug: location.href.indexOf('debug=1') != -1 ? 2 : 1
+				});
+			}
+		}
+
+		function change_solver(e) {
+			if (is_busy) {
+				return;
+			}
+			toggle_buttons(true);
+			worker.postMessage({ cmd: 'select solver', data: this.value });
+		}
+
+		function upload_table() {
+			if (is_busy || ret_code == 1) {
+				return;
+			}
+			let file = $('#tableFile')[0].files[0];
+			if (!file) {
+				return;
+			}
+			if (file.name != cur_solver.table_name) {
+				alert('file name not match, expect ' + cur_solver.table_name);
+				return;
+			}
+			toggle_buttons(true);
+			worker.postMessage({ cmd: 'upload table', data: file });
+		}
+
+		function randomMove(len) {
+			if (is_busy)
+				return;
+			let moves = [];
+			for (var i1 = 0; i1 < len; i1++) {
+				let move = ~~(Math.random() * 18);
+				if (moves.length > 0 && ~~(move / 3) == ~~(moves.at(-1) / 3)) {
+					i1 -= 1;
+					continue;
+				} else if (moves.length > 1 && ~~(move / 3) % 3 == ~~(moves.at(-1) / 3) % 3 && ~~(move / 3) == ~~(moves.at(-2) / 3)) {
+					i1 -= 1;
+					continue;
+				}
+				moves.push(move);
+			}
+			return moves.map(m => 'URFDLB'.charAt(~~(m / 3)) + ['', '2', "'"][m % 3]).join(' ');
+		}
+
+		$(() => {
+			$('#solver').change(change_solver);
+			$('#genTables').click(generate_table);
+			$('#downloadTables').click(download_table);
+			$('#uploadTables').click(() => $('#tableFile').click());
+			$('#tableFile').change(upload_table);
+			$('#startSolve').click(start_solve);
+			$('#solver').trigger('change');
+			$('#genRnd').click(() => {
+				if (is_busy)
+					return;
+				let scrambles = [];
+				let scrNum = $('#scrNum').val();
+				let scrLen = $('#scrLen').val();
+				for (let i = 0; i < scrNum; i++) {
+					scrambles.push(randomMove(scrLen));
+				}
+				$('#scramble').val(scrambles.join('\n'));
+				facelets = do_moves(CUBE_HOME, scrambles[0], 0)
+				update_layout();
+				show_cube(1);
+			});
+			$('#n_threads').empty();
+			for (let i = 1; i <= navigator.hardwareConcurrency; i++) {
+				$('#n_threads').append('<option value="' + i + '">' + i + '</option>');
+			}
+			$('#n_threads').change(() => {
+				$('#n_group').empty();
+				let n_threads = ~~($('#n_threads').val());
+				for (let i = 1; i <= n_threads; i++) {
+					if (n_threads % i == 0) {
+						$('#n_group').append('<option value="' + i + '">' + i + '</option>');
+					}
+				}
+				$('#n_group').val(1);
+			});
+			$('#n_threads').val(navigator.hardwareConcurrency).trigger('change');
+		});
+
+	</script>
+</head>
+<body>
+<center>
+	<div class="container">
+		<div class="card">
+			<div class="card-header"><font size=+2>Optimal Solver</font></div>
+			<div class="card-body">
+				<div class="input-group">
+					<div class="input-group-prepend" style=display:none>
+						<span class="input-group-text">Pruning File</span>
+					</div>
+					<select class="custom-select" id="solver" style=height:30px;margin-top:10px>
+						<option value="cube48opt1">h48prun01.dat - 30.4 MB</option>
+						<option value="cube48opt2">h48prun31h2.dat - 121 MB</option>
+						<option value="cube48opt3" selected>h48prun31h3.dat - 243 MB</option>
+						<option value="cube48opt4">h48prun31h4.dat - 486 MB</option>
+						<option value="cube48opt5">h48prun31h5.dat - 972 MB</option>
+						<option value="cube48opt6">h48prun31h6.dat - 1945 MB</option>
+						<option value="cube48opt7">h48prun31h7.dat - 3891 MB</option>
+						<option value="cube48opt8">h48prun31h8.dat - 7782 MB</option>
+						<option value="cube48opt9">h48prun31h9.dat - 15565 MB</option>
+					</select>
+					<div class="input-group-append" style=display:none>
+						<span class="input-group-text" id="tableSize">-</span>
+					</div>
+				</div>
+				<div class="input-group" style=margin-top:12px>
+					<button class="btn2 svw2" id="genTables">Generate</button> &nbsp;
+					<button class="btn2 svw2" id="downloadTables">Download</button>
+					<button class="btn2 svw2" id="uploadTables">Upload</button>
+				</div>
+				<input type="file" id="tableFile" style="display:none" />
+				<div class="progress" id="busyProgress" style="display: none;">
+					<div class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" id="busyProgressBar"></div>
+				</div>
+				<div class="input-group mt-2" style=display:none>
+					<div class="input-group-prepend">
+						<span class="input-group-text">Scrambles</span>
+					</div>
+					<select class="custom-select" id="scrLen" style=display:none>
+						<option value="15">15 moves</option>
+						<option value="16">16 moves</option>
+						<option value="17">17 moves</option>
+						<option value="18">18 moves</option>
+						<option value="19">19 moves</option>
+						<option value="20">20 moves</option>
+						<option value="25">25 moves</option>
+						<option value="30" selected>30 moves</option>
+					</select>
+					<select class="custom-select" id="scrNum" style=display:none>
+						<option value="1" selected>1 cube</option>
+						<option value="5">5 cubes</option>
+						<option value="10">10 cubes</option>
+						<option value="20">20 cubes</option>
+						<option value="50">50 cubes</option>
+						<option value="100">100 cubes</option>
+					</select>
+				</div>
+				<textarea class="form-control" id="scramble" rows="3" style=display:none></textarea>
+				<div class="input-group mt-2" style=margin-top:12px>
+
+					<div class="input-group-prepend">
+						<span class="input-group-text">Threads</span>
+						<select class="custom-select" style=height:26px id="n_threads"></select> &nbsp; &nbsp;
+						<select class="custom-select" style="height:26px; display:none" id="n_group"></select>
+					</div>
+					<div class="input-group-prepend">
+					</div>
+				</div>
+				<textarea class="form-control" id="logs" rows="10" wrap="off" readonly
+					style="font-family: monospace; width:100%; background-color:#36363D;
+					color:white; margin-top:10px;">
+				</textarea>
+			</div>
+		</div>
+	</div>
+
+<!--------------------------------------------------------------------------------->
+<!--                                AnimCube                                     -->
+<!--------------------------------------------------------------------------------->
+
+<script src=../AnimCube3.js></script>
+<script src=../rclib.js></script>
+<script src=../moves.js></script>
+<script src=../min2phase.js></script>
+
+<table border=0>
+<tr height=10></tr>
+<tr><td valign=top>
+<table border=0 style=line-height:0>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f0 type=button onclick=set_color(this)> </td>
+    <td> <input id=f1 type=button onclick=set_color(this)> </td>
+    <td> <input id=f2 type=button onclick=set_color(this)> </td>
+    <td colspan=2>
+    <td colspan=5 rowspan=3 align=center>
+      <table border=0>
+        <tr height=5> </tr>
+        <tr>
+          <td width=3>
+          <td> <input type=button id=R onclick=select_color(this) 
+                      style="background-color:red;"> </td>
+          <td> <input type=button id=Y onclick=select_color(this) 
+                      style="background-color:yellow;"> </td>
+          <td> <input type=button id=B onclick=select_color(this) 
+                      style="background-color:blue;"> </td>
+        </tr>
+        <tr>
+          <td>
+          <td> <input type=button id=O onclick=select_color(this) 
+                      style="background-color:orange"> </td>
+          <td> <input type=button id=W onclick=select_color(this) 
+                      style="background-color:white"> </td>
+          <td> <input type=button id=G onclick=select_color(this) 
+                      style="background-color:green"> </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr> 
+    <td colspan=4></td>
+    <td> <input id=f3 type=button onclick=set_color(this)> </td>
+    <td> <input id=f4 type=button onclick=set_color(this)> </td> 
+    <td> <input id=f5 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr> 
+    <td colspan=4></td>
+    <td> <input id=f6 type=button onclick=set_color(this)> </td>
+    <td> <input id=f7 type=button onclick=set_color(this)> </td>
+    <td> <input id=f8 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr height=5> </tr>
+  <tr>
+    <td> <input id=f9 type=button onclick=set_color(this)> </td>
+    <td> <input id=f10 type=button onclick=set_color(this)> </td>
+    <td> <input id=f11 type=button onclick=set_color(this)> </td>
+    <td width=5> </td>
+    <td> <input id=f12 type=button onclick=set_color(this)> </td>
+    <td> <input id=f13 type=button onclick=set_color(this)> </td>
+    <td> <input id=f14 type=button onclick=set_color(this)> </td>
+    <td width=5> </td>
+    <td> <input id=f15 type=button onclick=set_color(this)> </td>
+    <td> <input id=f16 type=button onclick=set_color(this)> </td>
+    <td> <input id=f17 type=button onclick=set_color(this)> </td>
+    <td width=5> </td>
+    <td> <input id=f18 type=button onclick=set_color(this)> </td>
+    <td> <input id=f19 type=button onclick=set_color(this)> </td>
+    <td> <input id=f20 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td> <input id=f21 type=button onclick=set_color(this)> </td>
+    <td> <input id=f22 type=button onclick=set_color(this)> </td>
+    <td> <input id=f23 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f24 type=button onclick=set_color(this)> </td>
+    <td> <input id=f25 type=button onclick=set_color(this)> </td>
+    <td> <input id=f26 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f27 type=button onclick=set_color(this)> </td>
+    <td> <input id=f28 type=button onclick=set_color(this)> </td>
+    <td> <input id=f29 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f30 type=button onclick=set_color(this)> </td>
+    <td> <input id=f31 type=button onclick=set_color(this)> </td>
+    <td> <input id=f32 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td> <input id=f33 type=button onclick=set_color(this)> </td>
+    <td> <input id=f34 type=button onclick=set_color(this)> </td>
+    <td> <input id=f35 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f36 type=button onclick=set_color(this)> </td>
+    <td> <input id=f37 type=button onclick=set_color(this)> </td>
+    <td> <input id=f38 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f39 type=button onclick=set_color(this)> </td>
+    <td> <input id=f40 type=button onclick=set_color(this)> </td>
+    <td> <input id=f41 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f42 type=button onclick=set_color(this)> </td>
+    <td> <input id=f43 type=button onclick=set_color(this)> </td>
+    <td> <input id=f44 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr height=5> </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f45 type=button onclick=set_color(this)> </td>
+    <td> <input id=f46 type=button onclick=set_color(this)> </td>
+    <td> <input id=f47 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f48 type=button onclick=set_color(this)> </td>
+    <td> <input id=f49 type=button onclick=set_color(this)> </td>
+    <td> <input id=f50 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f51 type=button onclick=set_color(this)> </td>
+    <td> <input id=f52 type=button onclick=set_color(this)> </td>
+    <td> <input id=f53 type=button onclick=set_color(this)> </td>
+  </tr>
+</table>
+<table border=0>
+  <tr height=10>
+  <tr>
+    <td> <button class="btn2 svw2" onclick="home()">Home</button> </td>
+    <td width=5>
+    <td> <button id=genRnd class="btn2 svw2">Random</button> </td>
+    <td width=5>
+    <td> <button id=sbtn onclick="solve()" class="btn2 svw2">Solve</button> </td>
+  </tr>
+  <tr height=8>
+  <tr>
+    <td> <button class="btn2 svw2" onclick="clera()">Clear</button> </td>
+    <td width=5> </td>
+    <td> <button class="btn2 svw2" onclick="help()">Help</button> </td>
+  </tr>
+</table>
+</td><td width=5%><td id=tdc valign=top>
+<div id=cube style=width:240px;height:240px
+     ondblclick="event.stopPropagation()">
+</div>
+<div id=status style=width:240px;margin-top:10px></div>
+</td>
+</tr></table>
+<div style=width:450px;margin-top:15px;margin-bottom:15px>
+<p>Powered by
+<a target=_blank href=https://github.com/cs0x7f/cubeopt-wasm>cubeopt-wasm</a>,
+Chen Shuang's web assembly version of Sebastiano Tronto's 
+<a target=_blank href=https://github.com/sebastianotronto/nissy-core/blob/master/benchmarks/benchmarks.md>h48&nbsp;solver</a>.
+</p>
+</div>
+<a href="javascript:history.go(-1)">Back</a><br><br>
+<script>
+"use strict";
+var color;
+var facelets;
+var facelets_arr = [];
+var cube_count = 1;
+var init_msg = 0;
+var sbtn_bgcolor_active = "#aaaaaa";
+var sbtn_bgcolor_inactive = "#ffffff";
+var CUBE_HOME   = "RRRRRRRRRGGGYYYBBBWWWGGGYYYBBBWWWGGGYYYBBBWWWOOOOOOOOO";
+var CUBE_BLANK  = "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL";
+var config = init_config();
+// acjs direct access for auto paint
+var id = 'cube';
+var acjs_cube = [];
+var acjs_initialCube = [];
+var acjs_paint = [];
+var acjs_removeListeners = [];
+var facelet_map = [ // map 54 facelets to acjs cube array
+  [0,6],[0,7],[0,8], [0,3],[0,4],[0,5], [0,0],[0,1],[0,2],
+  [4,2],[4,1],[4,0], [2,0],[2,3],[2,6], [5,0],[5,3],[5,6], [3,0],[3,3],[3,6],
+  [4,5],[4,4],[4,3], [2,1],[2,4],[2,7], [5,1],[5,4],[5,7], [3,1],[3,4],[3,7],
+  [4,8],[4,7],[4,6], [2,2],[2,5],[2,8], [5,2],[5,5],[5,8], [3,2],[3,5],[3,8],
+  [1,0],[1,3],[1,6], [1,1],[1,4],[1,7], [1,2],[1,5],[1,8],
+];
+main();
+function main() {
+  min2phase.initFull();
+  var params = location.search.substr(1).split('&');
+  for (var i=0; i < params.length; i++) {
+    var p = params[i].split('=');
+    if (typeof(p[1]) != 'undefined')
+      window[p[0]] = p[1];
+  }
+  if (typeof(facelets) == 'undefined')
+    facelets = CUBE_HOME;
+  else {
+    if (facelets.length > 54)
+      facelets = facelets.substr(0,54);
+    if (facelets.length < 54)
+      facelets = (facelets + CUBE_BLANK).substr(0,54);
+    facelets = facelets.toUpperCase();
+    var ftmp = facelets.split('');
+    for (var i=0; i < 54; i++) {
+      var f = ftmp[i];
+      if ('WYORGB'.indexOf(f) == -1)
+        ftmp[i] = 'L';
+    }
+    facelets = ftmp.join('');
+  }
+  update_layout();
+  show_cube(0);
+}
+function cvt_fac_to_seq(f) {
+  var s = new min2phase.Search().solution(cvt_to_m2p(f));
+  if (s.substr(0,5) != 'Error') 
+    return inv(s);
+  else {
+    var err = err_msg(s[6]);
+    if (s[6] < 7)
+      stat_msg(err);
+    return 'err';
+  }
+}
+function inv(s) {
+  var a = s.split(' ').reverse();
+  for (var i=0; i < a.length; i++) {
+     var mv = a[i];
+     if (mv.length == 1)
+       a[i] += "'";
+     else if (mv[1] != 2)
+       a[i] = mv[0];
+  }
+  return a.join(' ');
+}
+function solve() {
+  document.getElementById('status').style.textAlign = 'left';
+  if (ret_code == 2) {
+    stat_msg('Generate or Upload file before solving');
+    init_msg = 1;
+    return;
+  }
+  if (facelets == CUBE_HOME) {
+    stat_msg('Cube already solved<br>No moves required ');
+    return;
+  }
+  if (facelets == CUBE_BLANK) {
+    var s= 'No colors have been entered, ';
+    s += 'color the cube layout before solving';
+    stat_msg(s);
+    return;
+  }
+  stat_msg('Searching');
+  start_solve();
+}
+function err_msg(n) {
+  var s;
+  if      (n == 1) s = 'Invalid config (1)';
+  else if (n == 2) s = 'Invalid config (2)';
+  else if (n == 3) s = 'Flipped edge';
+  else if (n == 4) s = 'Invalid config (4)';
+  else if (n == 5) s = 'Twisted corner';
+  else if (n == 6) s = 'Parity error';
+  else if (n == 7) s = 'Solution not found';
+  else if (n == 8) s = 'Solution not found (8)';
+  else s  = 'Unknown Error: ' + n;
+  return s;
+}
+function update_layout() {
+  facelets_arr = facelets.split('');
+  for (var i=0; i < 54; i++) {
+    document.getElementById('f' + i).style.backgroundColor = color_str(facelets_arr[i]);
+  }
+}
+function select_color(f) { 
+  color = f.id;
+}
+function set_color(f) {
+  var fn = f.id.substr(1);
+  var ix1 = facelet_map[fn][0];
+  var ix2 = facelet_map[fn][1];
+    if (typeof(color) != 'undefined') {
+      var c = color_num(color);
+      acjs_cube[id][ix1][ix2] = c;
+      acjs_initialCube[id][ix1][ix2] = c;
+      acjs_paint[id]();
+      facelets_arr[fn] = color;
+      f.style.backgroundColor = color_str(color);
+      facelets = facelets_arr.join('');
+    }
+}
+function color_num(c) {
+  if (c == 'W') return 10;
+  else if (c == 'Y') return 11;
+  else if (c == 'O') return 12;
+  else if (c == 'R') return 13;
+  else if (c == 'G') return 14;
+  else if (c == 'B') return 15;
+}
+function home() {
+  if (is_busy)
+    return;
+  facelets = CUBE_HOME;
+  if (CUBE_HOME != facelets_arr.join('')) {
+    update_layout();
+    show_cube(1);
+  }
+}
+function clera() {
+  if (is_busy)
+    return;
+  facelets = CUBE_BLANK;
+  if (CUBE_BLANK != facelets_arr.join('')) {
+    update_layout();
+    show_cube(1);
+  }
+}
+function help() {
+  window.open('solver_help.html');
+}
+function animcube_log_handler(e) {
+  if (e.data.substr(0,8) == 'Solution') {
+    var par = '&id=cube' + config;
+    par += '&move=' + e.data.substr(17);
+    par += '&facelets=' + cvt_to_anim(facelets);
+    par += animcube_params();
+    acjs_removeListeners[id]();
+    AnimCube3(par);
+  }
+  if (e.data.substr(0,5) == 'Cube1') {
+    document.getElementById('status').style.textAlign = 'center';
+    var time = (e.data.split(' ')[6].replace('tt=','')/1000).toFixed(2);
+    stat_msg(time);
+    e.data = e.data.replace('Cube1', 'Cube' + cube_count++);
+  }
+  sbtn_inactive();
+}
+function show_cube(n) {
+  if (n) {
+    stat_msg('');
+    acjs_removeListeners[id]();
+  }
+  var af = cvt_to_anim(facelets);
+  af += animcube_params();
+  AnimCube3('&id=cube' + config + "&facelets=" + af);
+}
+function init_config() {
+  var s = '&fonttype=0';
+  s += '&bgcolor=38383D';
+  s += '&butbgcolor=baffc9';
+  s += '&repeat=0';
+  s += '&textsize=20';
+  s += '&buttonheight=17';
+  s += '&slidercolor=707070';
+  s += '&sliderbgcolor=dddddd';
+  s += '&snap=1';
+  return s;
+}
+function stat_msg(s) {
+  document.getElementById('status').innerHTML = s;
+}
+function sbtn_active() {
+  document.getElementById('sbtn').style.backgroundColor = sbtn_bgcolor_active;
+}
+function sbtn_inactive() {
+  document.getElementById('sbtn').style.backgroundColor = sbtn_bgcolor_inactive;
+}
+</script>
+</center>
+</body>
+</html>

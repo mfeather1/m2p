@@ -1,0 +1,32 @@
+a:link {color:#4B80FE}
+a:visited {color:#854ABB}
+body {
+  background-color:#38383D;
+  color:white;
+  margin-left:5%; 
+  margin-right:5%;
+  margin-bottom:0;
+}
+table {
+  border-style:solid; 
+  border-color:#38383D; 
+}
+td {
+  text-align:justify;
+}
+p {
+  margin:0;
+  text-align:justify;
+}
+.btn2 {
+  height:28px;
+  border-radius:15px;
+  background:white;
+  padding:0px;
+  border:none;
+  outline:none;
+}
+input {height:22px; width:22px;}
+.svw1 {width:74px;}
+.svw2 {width:100px;}
+.svw3 {width:120px;}

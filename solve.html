@@ -191,7 +191,7 @@
 <div style=width:500px>
 <p>Powered by
 <a target=_blank href=https://github.com/cs0x7f/min2phase.js>min2phase.js</a>, 
-Shuang Chen's optimized version of Herbert Kociemba's two-phase algorithm.</p>
+Chen Shuang's optimized version of Herbert Kociemba's two-phase algorithm.</p>
 </div>
 <div id=back></div>
 <br>
@@ -213,6 +213,19 @@ var worker;
 var time1, time2;
 var count = 1;
 var show_depths = 1;
+// acjs direct access for auto paint
+var id = 'cube';
+var acjs_cube = [];
+var acjs_initialCube = [];
+var acjs_paint = [];
+var acjs_removeListeners = [];
+var facelet_map = [ // map 54 facelets to acjs cube array
+  [0,6],[0,7],[0,8], [0,3],[0,4],[0,5], [0,0],[0,1],[0,2],
+  [4,2],[4,1],[4,0], [2,0],[2,3],[2,6], [5,0],[5,3],[5,6], [3,0],[3,3],[3,6],
+  [4,5],[4,4],[4,3], [2,1],[2,4],[2,7], [5,1],[5,4],[5,7], [3,1],[3,4],[3,7],
+  [4,8],[4,7],[4,6], [2,2],[2,5],[2,8], [5,2],[5,5],[5,8], [3,2],[3,5],[3,8],
+  [1,0],[1,3],[1,6], [1,1],[1,4],[1,7], [1,2],[1,5],[1,8],
+];
 main();
 function main() {
   new_worker();
@@ -294,11 +307,27 @@ function update_layout() {
 function select_color(f) { 
   color = f.id;
 }
-function set_color(f) { 
-  if (typeof(color) != 'undefined') {
-    facelets_arr[f.id.substr(1)] = color;
-    f.style.backgroundColor = color_str(color);
-  }
+function set_color(f) {
+  var fn = f.id.substr(1);
+  var ix1 = facelet_map[fn][0];
+  var ix2 = facelet_map[fn][1];
+    if (typeof(color) != 'undefined') {
+      var c = color_num(color);
+      acjs_cube[id][ix1][ix2] = c;
+      acjs_initialCube[id][ix1][ix2] = c;
+      acjs_paint[id]();
+      facelets_arr[fn] = color;
+      f.style.backgroundColor = color_str(color);
+      facelets = facelets_arr.join('');
+    }
+}
+function color_num(c) {
+  if (c == 'W') return 10;
+  else if (c == 'Y') return 11;
+  else if (c == 'O') return 12;
+  else if (c == 'R') return 13;
+  else if (c == 'G') return 14;
+  else if (c == 'B') return 15;
 }
 function show() {
   if (solve_running == 1)
