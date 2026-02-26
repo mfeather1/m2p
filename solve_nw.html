@@ -1,0 +1,449 @@
+<!doctype html>
+<html>
+<head>
+ <title> Min2Phase Solver (NW)</title>
+ <meta name="author" content="Michael Feather">
+ <meta name="robots" content="nofollow">
+ <link rel=icon href=mini_cube.png type=image/png>
+ <link rel="stylesheet" type="text/css" href="style.css">
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <script src=min2phase_nw.js></script>
+ <script src=AnimCube3.js></script>
+ <script src=rclib.js></script>
+ <style>
+  html, body {
+    overflow:auto;
+    height:100vh;
+    height:100dvh;
+    background-color:#38383D;
+  }
+  body {
+    margin:0;
+    padding:0 5%; 
+  }
+ </style>
+</head>
+<body ondblclick="fullScreen(event)">
+<center>
+<style> input { height:22px; width:22px;} </style>
+<table>
+<tr><td height=8></tr>
+<tr><td valign=top>
+<font size=+2> Min2Phase Solver (NW)</font>
+<table border=0 style=line-height:0>
+  <tr height=8>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f0 type=button onclick=set_color(this)> </td>
+    <td> <input id=f1 type=button onclick=set_color(this)> </td>
+    <td> <input id=f2 type=button onclick=set_color(this)> </td>
+    <td colspan=2>
+    <td colspan=5 rowspan=3 align=center>
+      <table border=0>
+        <tr height=5> </tr>
+        <tr>
+          <td width=3>
+          <td> <input type=button id=R onclick=select_color(this) 
+                      style="background-color:red;"> </td>
+          <td> <input type=button id=Y onclick=select_color(this) 
+                      style="background-color:yellow;"> </td>
+          <td> <input type=button id=B onclick=select_color(this) 
+                      style="background-color:blue;"> </td>
+        </tr>
+        <tr>
+          <td>
+          <td> <input type=button id=O onclick=select_color(this) 
+                      style="background-color:orange"> </td>
+          <td> <input type=button id=W onclick=select_color(this) 
+                      style="background-color:white"> </td>
+          <td> <input type=button id=G onclick=select_color(this) 
+                      style="background-color:green"> </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr> 
+    <td colspan=4></td>
+    <td> <input id=f3 type=button onclick=set_color(this)> </td>
+    <td> <input id=f4 type=button onclick=set_color(this)> </td> 
+    <td> <input id=f5 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr> 
+    <td colspan=4></td>
+    <td> <input id=f6 type=button onclick=set_color(this)> </td>
+    <td> <input id=f7 type=button onclick=set_color(this)> </td>
+    <td> <input id=f8 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr height=10> </tr>
+  <tr>
+    <td> <input id=f9 type=button onclick=set_color(this)> </td>
+    <td> <input id=f10 type=button onclick=set_color(this)> </td>
+    <td> <input id=f11 type=button onclick=set_color(this)> </td>
+    <td width=12> </td>
+    <td> <input id=f12 type=button onclick=set_color(this)> </td>
+    <td> <input id=f13 type=button onclick=set_color(this)> </td>
+    <td> <input id=f14 type=button onclick=set_color(this)> </td>
+    <td width=12> </td>
+    <td> <input id=f15 type=button onclick=set_color(this)> </td>
+    <td> <input id=f16 type=button onclick=set_color(this)> </td>
+    <td> <input id=f17 type=button onclick=set_color(this)> </td>
+    <td width=12> </td>
+    <td> <input id=f18 type=button onclick=set_color(this)> </td>
+    <td> <input id=f19 type=button onclick=set_color(this)> </td>
+    <td> <input id=f20 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td> <input id=f21 type=button onclick=set_color(this)> </td>
+    <td> <input id=f22 type=button onclick=set_color(this)> </td>
+    <td> <input id=f23 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f24 type=button onclick=set_color(this)> </td>
+    <td> <input id=f25 type=button onclick=set_color(this)> </td>
+    <td> <input id=f26 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f27 type=button onclick=set_color(this)> </td>
+    <td> <input id=f28 type=button onclick=set_color(this)> </td>
+    <td> <input id=f29 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f30 type=button onclick=set_color(this)> </td>
+    <td> <input id=f31 type=button onclick=set_color(this)> </td>
+    <td> <input id=f32 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td> <input id=f33 type=button onclick=set_color(this)> </td>
+    <td> <input id=f34 type=button onclick=set_color(this)> </td>
+    <td> <input id=f35 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f36 type=button onclick=set_color(this)> </td>
+    <td> <input id=f37 type=button onclick=set_color(this)> </td>
+    <td> <input id=f38 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f39 type=button onclick=set_color(this)> </td>
+    <td> <input id=f40 type=button onclick=set_color(this)> </td>
+    <td> <input id=f41 type=button onclick=set_color(this)> </td>
+    <td> </td>
+    <td> <input id=f42 type=button onclick=set_color(this)> </td>
+    <td> <input id=f43 type=button onclick=set_color(this)> </td>
+    <td> <input id=f44 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr height=10> </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f45 type=button onclick=set_color(this)> </td>
+    <td> <input id=f46 type=button onclick=set_color(this)> </td>
+    <td> <input id=f47 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f48 type=button onclick=set_color(this)> </td>
+    <td> <input id=f49 type=button onclick=set_color(this)> </td>
+    <td> <input id=f50 type=button onclick=set_color(this)> </td>
+  </tr>
+  <tr>
+    <td colspan=4></td>
+    <td> <input id=f51 type=button onclick=set_color(this)> </td>
+    <td> <input id=f52 type=button onclick=set_color(this)> </td>
+    <td> <input id=f53 type=button onclick=set_color(this)> </td>
+  </tr>
+</table>
+
+<table border=0>
+  <tr height=14>
+  <tr>
+    <td> <button class="btn svw1" onclick="home()">Home</button> </td>
+    <td width=5>
+    <td> <button class="btn svw1" onclick="show()">Show</button> </td>
+    <td width=5>
+    <td> <button class="btn svw2" onclick="rand()">Random</button> </td>
+    <td width=5>
+    <td> <button class="btn svw1" onclick="solve()">Solve</button> </td>
+  </tr>
+  <tr height=6>
+  <tr>
+    <td> <button class="btn svw1" onclick="clera()">Clear</button> </td>
+    <td width=5> </td>
+    <td> <button class="btn svw1" onclick="help()">Help</button> </td>
+    <td width=5> </td>
+    <td valign=top colspan=3 style=text-align:right>
+        Max Length
+        <input type=text id=maxlen maxlength=5
+         style="font-size:.9em; height:24px; width:40px; border:none;
+           border-radius:10px; padding-left:8px; border-radius:15px" value=20>
+    </td>
+  </tr>
+  <!--
+  <tr height=2>
+  <tr>
+    <td valign=top colspan=7 style=text-align:right>
+        Probe Max
+        <input type=text id=pmax 
+         style="font-size:.9em; height:24px; width:80px; border:none;
+           border-radius:10px; padding-left:8px; border-radius:15px" value=10000>
+    </td>
+  </tr>
+  -->
+  <tr height=10>
+  <tr> 
+    <td colspan=8>
+      <div id=btn>
+      </div>
+     </td>
+  </tr>
+</table>
+
+</td><td width=5%><td id=tdc valign=top>
+<div id=cube style=width:290px;height:290px
+     ondblclick="event.stopPropagation()">
+</div>
+<br>
+<div id=status style=width:300px></div>
+</td>
+</tr><tr height=2></tr></table>
+<div style=width:500px>
+<p>Powered by
+<a target=_blank href=https://github.com/cs0x7f/min2phase.js>min2phase.js</a>, 
+Chen Shuang's optimized version of Herbert Kociemba's two-phase algorithm.</p>
+</div>
+<div id=back></div>
+<br>
+<script>
+"use strict";
+var color;
+var style;
+var facelets;
+var facelets_arr = [];
+var back = 0;
+var solution;
+var acjs_removeListeners = [];
+var solve_running = 0;
+var logtxt = [];
+var CUBE_HOME   = "RRRRRRRRRGGGYYYBBBWWWGGGYYYBBBWWWGGGYYYBBBWWWOOOOOOOOO";
+var CUBE_BLANK  = "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL";
+var config = init_config();
+var time1, time2;
+var count = 1;
+var show_depths = 1;
+var stl;
+main();
+function main() {
+  min2phase.initFull();
+  var params = location.search.substr(1).split('&');
+  for (var i=0; i < params.length; i++) {
+    var p = params[i].split('=');
+    if (typeof(p[1]) != 'undefined')
+      window[p[0]] = p[1];
+  }
+  if (document.referrer.indexOf('3ColorCube') > 0)
+    back = 1;
+  if (typeof(facelets) == 'undefined')
+    facelets = CUBE_HOME;
+  else {
+    if (facelets.length > 54)
+      facelets = facelets.substr(0,54);
+    if (facelets.length < 54)
+      facelets = (facelets + CUBE_BLANK).substr(0,54);
+    facelets = facelets.toUpperCase();
+    var ftmp = facelets.split('');
+    for (var i=0; i < 54; i++) {
+      var f = ftmp[i];
+      if ('WYORGB'.indexOf(f) == -1)
+        ftmp[i] = 'L';
+    }
+    facelets = ftmp.join('');
+  }
+  update_layout();
+  show_cube(0);
+  var s = (back == 1) ?
+    '<br><a href="javascript: history.go(-1)">Back</a>' : '<br>';
+  document.getElementById('back').innerHTML = s;
+}
+function ipc(e) {
+  time2 = Date.now();
+  solve_running = 0;
+  if (solution.length > 0) {
+    if (solution.substr(0,5) != 'Error') {
+      show_solution();
+    }
+    else {
+      var err = err_msg(solution[6]);
+      if (solution[6] < 7)
+        stat_msg(err);
+      else {
+        var t = ((time2 - time1)/1000).toFixed(2);
+        var s = err + '<br>Search time: ' + t;
+        stat_msg(s);
+        // mconsole(s);
+      }
+      document.getElementById('status').style.textAlign = 'left';
+    }
+  }
+}
+function err_msg(n) {
+  var s;
+  if      (n == 1) s = 'Invalid config';
+  else if (n == 2) s = 'Invalid config';
+  else if (n == 3) s = 'Flipped edge';
+  else if (n == 4) s = 'Invalid config (4)';
+  else if (n == 5) s = 'Twisted corner';
+  else if (n == 6) s = 'Parity error';
+  else if (n == 7) s = 'Solution not found';
+  // else if (n == 8) s = 'Solution not found (8)';
+  else if (n == 8) s = 'Solution not found<br>Increase Probe Max';
+  else s  = 'Unknown Error: ' + n;
+  return s;
+}
+function update_layout() {
+  facelets_arr = facelets.split('');
+  for (var i=0; i < 54; i++) {
+    document.getElementById('f' + i).style.backgroundColor = color_str(facelets_arr[i]);
+  }
+}
+function select_color(f) { 
+  color = f.id;
+}
+function set_color(f) { 
+  if (typeof(color) != 'undefined') {
+    facelets_arr[f.id.substr(1)] = color;
+    f.style.backgroundColor = color_str(color);
+  }
+}
+function show() {
+  if (solve_running == 1)
+    return;
+  if (facelets != facelets_arr.join('')) {
+    facelets = facelets_arr.join('');
+    show_cube(1);
+  }
+}
+function home() {
+  if (solve_running == 1)
+    return;
+  facelets = CUBE_HOME;
+  if (CUBE_HOME != facelets_arr.join('')) {
+    update_layout();
+    show_cube(1);
+  }
+}
+function rand() {
+  if (solve_running == 1)
+    return;
+  var r = min2phase.randomCube();
+  facelets = cvt_from_m2p(r);
+  update_layout();
+  show_cube(1);
+}
+function clera() {
+  if (solve_running == 1)
+    return;
+  facelets = CUBE_BLANK;
+  if (CUBE_BLANK != facelets_arr.join('')) {
+    update_layout();
+    show_cube(1);
+  }
+}
+function help() {
+  window.open('solver_help_nw.html');
+}
+function solve() {
+  if (solve_running == 1 || facelets == CUBE_HOME)
+    return;
+  var c = cvt_to_m2p(facelets);
+  var s = document.getElementById('maxlen').value;
+  var n = (!isNaN(s) ? Number(s) : 20);
+  // var s = document.getElementById('pmax').value;
+  // var p = (!isNaN(s) ? Number(s) : 10000);
+  var p = 10000; 
+  solve_running = 1;
+  logtxt.length = 0;
+  var search = new min2phase.Search();
+  document.getElementById('status').style.textAlign = 'left';
+  if (n >= 20) {
+    time1 = Date.now();
+    solution = search.solution(c, n, p);
+    ipc();
+  }
+  else {
+    stat_msg('Searching');
+    // delay search for stat msg to appear
+    setTimeout(function(){
+      time1 = Date.now();
+      solution = search.solution(c, n, p);
+      ipc()}, 10);
+  }
+}
+function show_solution() {
+  var af = cvt_to_anim(facelets);
+  show_cube_layout(facelets, logtxt);
+  var t = ((time2 - time1)/1000).toFixed(2);
+  var len = get_len(solution);
+  var ls = '(' + len[2] + 'f) '
+  var sol = solution.replace('.  ', '').replace(/  /g, ' ');
+  if (show_depths == 1) {
+    var ds1 = len[0] + '+' + len[1];
+    var s = t + ' &nbsp; ' + ds1;
+    stat_msg(log_btn() + s);
+    var ds2 = '[' + ds1 + '] ';
+    s = solution + ds2 + ls + t;
+    mconsole(count++ + ' ' + s);
+    logtxt.push(s);
+  }
+  else {
+    stat_msg(log_btn() + t);
+    s = sol + ls + t;
+    mconsole(count++ + ' ' + s);
+    logtxt.push(s);
+  }
+  logtxt.push('<br><br>');
+  var ap = animcube_params();
+  if (ap != '')
+    af += ap;
+  acjs_removeListeners['cube']();
+  AnimCube3('&id=cube' + config + '&move=' + sol + "&facelets=" + af);
+  document.getElementById('status').style.textAlign = 'center';
+  solve_running = 0;
+}
+function log_btn() {
+  var s= '<button class="btn svw3" style=margin-bottom:12px';
+  s += ' onclick=show_log()>Show Log</button><br>';
+  return s;
+}
+function get_len(s) {
+  var a = s.split(' ');
+  for (var i=0, d=0, n=0; i < a.length; i++) {
+    if (a[i] == '.')
+      d = n;
+    else if (a[i] != '')
+      n++;
+  }
+  return [d, n-d, n];
+}
+function show_cube(n) {
+  if (n) {
+    stat_msg('');
+    acjs_removeListeners['cube']();
+  }
+  var af = cvt_to_anim(facelets);
+  var ap = animcube_params();
+  if (ap != '')
+    af += ap;
+  AnimCube3('&id=cube' + config + "&facelets=" + af);
+}
+function init_config() {
+  var s = '&fonttype=0';
+  s += '&bgcolor=38383D';
+  s += '&butbgcolor=baffc9';
+  s += '&repeat=0';
+  s += '&textsize=20';
+  s += '&buttonheight=17';
+  s += '&slidercolor=707070';
+  s += '&sliderbgcolor=dddddd';
+  s += '&snap=1';
+  return s;
+}
+function stat_msg(s) {
+  document.getElementById('status').innerHTML = s;
+}
+</script>
+</center>
+</body>
+</html>
