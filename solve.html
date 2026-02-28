@@ -309,11 +309,17 @@ function select_color(f) {
   selectedColor = color_num(f.id);
 }
 function set_color(f) {
+  var pc = document.getElementById('paint_cube').checked;
+  if (!pc) {
+    var s = 'To paint the cube press Home, Clear or check the box';
+    s += ' next to the color pallet (six squares above layout)';
+    alert(s);
+    return;
+  }
   var fn = f.id.substr(1);
   var ix1 = facelet_map[fn][0];
   var ix2 = facelet_map[fn][1];
-  var pc = document.getElementById('paint_cube').checked;
-  if (pc && typeof(color) != 'undefined') {
+  if (typeof(color) != 'undefined') {
     var c = color_num(color);
     acjs_cube[id][ix1][ix2] = c;
     acjs_initialCube[id][ix1][ix2] = c;
