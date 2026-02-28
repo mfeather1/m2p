@@ -8,7 +8,7 @@
  <link rel="stylesheet" type="text/css" href="style.css">
  <meta name=viewport content="width=device-width, initial-scale=1">
  <script src=min2phase_mod.js></script>
- <script src=A3mod.js></script>
+ <script src=AnimCube3.js></script>
  <script src=rclib.js></script>
  <style>
   html, body {
@@ -37,11 +37,12 @@
     <td> <input id=f0 type=button onclick=set_color(this)> </td>
     <td> <input id=f1 type=button onclick=set_color(this)> </td>
     <td> <input id=f2 type=button onclick=set_color(this)> </td>
-    <td colspan=1>
-    <td colspan=7 rowspan=3>
-      <table border=0 style=text-align:left>
-        <tr style=text-align:left>
-          <td width=18>
+    <td colspan=2>
+    <td colspan=5 rowspan=3 align=center>
+      <table border=0>
+        <tr height=5> </tr>
+        <tr>
+          <td width=3>
           <td> <input type=button id=R onclick=select_color(this) 
                       style="background-color:red;"> </td>
           <td> <input type=button id=Y onclick=select_color(this) 
@@ -57,10 +58,6 @@
                       style="background-color:white"> </td>
           <td> <input type=button id=G onclick=select_color(this) 
                       style="background-color:green"> </td>
-          <td>
-            &nbsp;
-            <input id=paint_cube type=checkbox style="height:18px" checked>
-          </td>
         </tr>
       </table>
     </td>
@@ -177,6 +174,12 @@
     </td>
   </tr>
   <tr height=10>
+  <tr> 
+    <td colspan=8>
+      <div id=btn>
+      </div>
+     </td>
+  </tr>
 </table>
 
 </td><td width=5%><td id=tdc valign=top>
@@ -303,25 +306,22 @@ function update_layout() {
     document.getElementById('f' + i).style.backgroundColor = color_str(facelets_arr[i]);
   }
 }
-var selectedColor;
 function select_color(f) { 
   color = f.id;
-  selectedColor = color_num(f.id);
 }
 function set_color(f) {
   var fn = f.id.substr(1);
   var ix1 = facelet_map[fn][0];
   var ix2 = facelet_map[fn][1];
-  var pc = document.getElementById('paint_cube').checked;
-  if (pc && typeof(color) != 'undefined') {
-    var c = color_num(color);
-    acjs_cube[id][ix1][ix2] = c;
-    acjs_initialCube[id][ix1][ix2] = c;
-    acjs_paint[id]();
-    facelets_arr[fn] = color;
-    f.style.backgroundColor = color_str(color);
-    facelets = facelets_arr.join('');
-  }
+    if (typeof(color) != 'undefined') {
+      var c = color_num(color);
+      acjs_cube[id][ix1][ix2] = c;
+      acjs_initialCube[id][ix1][ix2] = c;
+      acjs_paint[id]();
+      facelets_arr[fn] = color;
+      f.style.backgroundColor = color_str(color);
+      facelets = facelets_arr.join('');
+    }
 }
 function color_num(c) {
   if (c == 'W') return 10;
@@ -347,10 +347,6 @@ function home() {
     update_layout();
     show_cube(1);
   }
-  set_paint_cube(true);
-}
-function set_paint_cube(b) {
-  document.getElementById('paint_cube').checked = b;
 }
 function rand() {
   if (solve_running == 1)
@@ -359,7 +355,6 @@ function rand() {
   facelets = cvt_from_m2p(r);
   update_layout();
   show_cube(1);
-  set_paint_cube(false);
 }
 function clera() {
   if (solve_running == 1)
@@ -369,24 +364,13 @@ function clera() {
     update_layout();
     show_cube(1);
   }
-  set_paint_cube(true);
 }
 function help() {
   window.open('solver_help.html');
 }
 function solve() {
-  if (solve_running == 1) 
+  if (solve_running == 1 || facelets == CUBE_HOME)
     return;
-  if (facelets == CUBE_HOME) {
-    stat_msg('Cube already solved<br>No moves required ');
-    return;
-  }
-  if (facelets == CUBE_BLANK) {
-    var s= 'No colors have been entered, ';
-    s += 'color the cube layout before solving';
-    stat_msg(s);
-    return;
-  }
   var c = cvt_to_m2p(facelets);
   var s = document.getElementById('maxlen').value;
   var n = (!isNaN(s) ? Number(s) : 20);
@@ -441,14 +425,11 @@ function show_solution() {
     logtxt.push(s);
   }
   logtxt.push('<br><br>');
+  var ap = animcube_params();
+  if (ap != '')
+    af += ap;
   acjs_removeListeners['cube']();
-  set_paint_cube(false);
-  var p = '&id=cube';
-  p += config;
-  p += animcube_params();
-  p += '&facelets=' + af;
-  p += '&move=' + sol;
-  AnimCube3(p);
+  AnimCube3('&id=cube' + config + '&move=' + sol + "&facelets=" + af);
   document.getElementById('status').style.textAlign = 'center';
   solve_running = 0;
 }
@@ -472,11 +453,11 @@ function show_cube(n) {
     stat_msg('');
     acjs_removeListeners['cube']();
   }
-  var p = '&id=cube';
-  p += config;
-  p += animcube_params();
-  p += '&facelets=' + cvt_to_anim(facelets);
-  AnimCube3(p);
+  var af = cvt_to_anim(facelets);
+  var ap = animcube_params();
+  if (ap != '')
+    af += ap;
+  AnimCube3('&id=cube' + config + "&facelets=" + af);
 }
 function init_config() {
   var s = '&fonttype=0';
@@ -488,7 +469,6 @@ function init_config() {
   s += '&slidercolor=707070';
   s += '&sliderbgcolor=dddddd';
   s += '&snap=1';
-  s += '&edit=0';
   return s;
 }
 function stat_msg(s) {
