@@ -192,15 +192,15 @@
 <a target=_blank href=https://github.com/cs0x7f/min2phase.js>min2phase.js</a>, 
 Chen Shuang's optimized version of Herbert Kociemba's two-phase algorithm.</p>
 </div>
-<div id=back></div>
 <br>
+<a href="javascript: history.go(-1)">Back</a>
+<br><br>
 <script>
 "use strict";
 var color;
 var style;
 var facelets;
 var facelets_arr = [];
-var back = 0;
 var solution = [];
 var acjs_removeListeners = [];
 var solve_running = 0;
@@ -234,8 +234,6 @@ function main() {
     if (typeof(p[1]) != 'undefined')
       window[p[0]] = p[1];
   }
-  if (document.referrer.indexOf('3ColorCube') > 0)
-    back = 1;
   if (typeof(facelets) == 'undefined')
     facelets = CUBE_HOME;
   else {
@@ -254,9 +252,6 @@ function main() {
   }
   update_layout();
   show_cube(0);
-  var s = (back == 1) ?
-    '<br><a href="javascript: history.go(-1)">Back</a>' : '<br>';
-  document.getElementById('back').innerHTML = s;
 }
 function new_worker() {
   worker = new Worker('min2phase_mod.js');
