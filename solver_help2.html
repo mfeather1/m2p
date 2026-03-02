@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+ <title> Cube Solver Help </title>
+ <meta name="robots" content="noindex, nofollow">
+ <link rel=icon href=../mini_cube.png type=image/png>
+ <link rel="stylesheet" type="text/css" href="style.css">
+ <meta name=viewport content="width=device-width, initial-scale=1">
+ <style> 
+  body {margin-left: 10%; margin-right: 10%;}
+ .tabdata td {padding-left:10px; padding-right:10px;}
+ </style>
+</head>
+<body><center>
+<b>Cube Solver Help</b>
+<br><br>
+<p>To use the solver press the Random button and after a scrambled cube 
+appears press Solve.
+When the solution appears, press the Play button (right arrow) on the
+control bar under the cube.
+<br><br>
+To enter a cube configuration, press Clear and then click on a color in the
+palette (six squares above layout) and then click on squares in the layout
+to color the cube.
+The checkbox next to the palette allows painting directly on the 3D cube,
+check the box to enable.</p>
+<br>
+<b>Custom Cube Display</b>
+<br><br>
+<p>The following AnimCubeJS URL parameters can be passed to the solver to
+customize the cube display (click on any link to see documentation).</p>
+<br>
+<table class=tabdata border=0>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#align>align</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#bgcolor>bgcolor</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#borderwidth>borderwidth</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#butbgcolor>butbgcolor</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#buttonheight>buttonheight</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#clickprogress>clickprogress</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#counter>counter</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#cubecolor>cubecolor</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#doublespeed>doublespeed</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#edit>edit</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#fonttype>fonttype</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#hint>hint</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#hintborder>hintborder</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#hinthoriz>hinthoriz</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#hintvert>hintvert</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#metric>metric</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#movetext>movetext</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#movetextspace>movetextspace</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#perspective>perspective</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#position>position</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#repeat>repeat</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#scale>scale</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#slidercolor>slidercolor</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#snap>snap</a></td>
+ </tr>
+ <tr>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#speed>speed</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#textsize>textsize</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#troughcolor>troughcolor</a></td>
+  <td><a href=https://cubing.github.io/AnimCubeJS/animcubejs.html#yz>yz</a></td>
+ </tr>
+</table>
+<!--
+  not allowed:
+  buttonbar colorscheme colors config demo facelets gabbacolors initmove
+  initrevmove move pos randmoves scramble scw supercube superfacelets
+-->
+<br>
+<p>Here is an example of a
+<a href="solve.html?hint=12&scale=10&position=lluuu&edit=1&speed=12&buttonheight=19&bgcolor=ffffff&fonttype=0&textsize=18&align=35&movetext=1&hinthoriz=3.2&hintvert=4.1&hintborder=1">custom cube display</a>.
+<br><br>
+The facelets parameter can be used with color codes: RGYBWO (Red, Green,
+Yellow, Blue, White, Orange).
+The Text Format is used which is the colors from the layout combined onto one
+line, here is an <a href="solve.html?facelets=RORORORORGBGYWYBGBWYWBGBWYWGBGYWYGBGYWYBGBWYWORORORORO">example</a>.
+A move sequence can be converted into facelets
+<a href="https://mfeather1.github.io/3ColorCube/text_input_cube.html">here</a>.
+</p>
+<br>
+<a href=javascript:window.close()>Close</a>
+<br><br>
+</center>
+</body>
+</html>
