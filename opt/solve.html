@@ -653,7 +653,7 @@ function animcube_log_handler(e) {
     document.getElementById('status').style.textAlign = 'center';
     var time = (e.data.split(' ')[6].replace('tt=','')/1000).toFixed(2);
     stat_msg(time);
-    e.data = e.data.replace('Cube1', 'Cube' + cube_count++);
+    e.data = e.data.replace('Cube1', 'Cube ' + cube_count++);
   }
   sbtn_inactive();
 }
