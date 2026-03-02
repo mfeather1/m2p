@@ -309,6 +309,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">Threads</span>
 						<select class="custom-select" style=height:26px id="n_threads"></select> &nbsp; &nbsp;
+						<button class="btn2 svw1" onclick=clear_log()>Clear</button>
 						<select class="custom-select" style="height:26px; display:none" id="n_group"></select>
 					</div>
 					<div class="input-group-prepend">
@@ -687,6 +688,10 @@ function sbtn_active() {
 }
 function sbtn_inactive() {
   document.getElementById('sbtn').style.backgroundColor = sbtn_bgcolor_inactive;
+}
+function clear_log() {
+  document.getElementById('logs').value = '';
+  cube_count = 1;
 }
 </script>
 </center>
