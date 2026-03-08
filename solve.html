@@ -361,6 +361,7 @@ function help() {
 function solve() {
   if (solve_running == 1) 
     return;
+  document.getElementById('status').style.textAlign = 'left';
   if (facelets == CUBE_HOME) {
     stat_msg('Cube already solved<br>No moves required ');
     return;

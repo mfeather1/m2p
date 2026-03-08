@@ -211,7 +211,6 @@ Chen Shuang's optimized version of Herbert Kociemba's two-phase algorithm.</p>
 <script>
 "use strict";
 var color;
-var style;
 var facelets;
 var facelets_arr = [];
 var back = 0;
@@ -248,7 +247,8 @@ function main() {
     if (typeof(p[1]) != 'undefined')
       window[p[0]] = p[1];
   }
-  if (document.referrer.indexOf('3ColorCube') > 0)
+  var ref = document.referrer;
+  if (ref.indexOf('3ColorCube') > 0 || ref.indexOf('m2p') > 0)
     back = 1;
   if (typeof(facelets) == 'undefined')
     facelets = CUBE_HOME;
@@ -320,15 +320,15 @@ function set_color(f) {
   var fn = f.id.substr(1);
   var ix1 = facelet_map[fn][0];
   var ix2 = facelet_map[fn][1];
-    if (typeof(color) != 'undefined') {
-      var c = color_num(color);
-      acjs_cube[id][ix1][ix2] = c;
-      acjs_initialCube[id][ix1][ix2] = c;
-      acjs_paint[id]();
-      facelets_arr[fn] = color;
-      f.style.backgroundColor = color_str(color);
-      facelets = facelets_arr.join('');
-    }
+  if (typeof(color) != 'undefined') {
+    var c = color_num(color);
+    acjs_cube[id][ix1][ix2] = c;
+    acjs_initialCube[id][ix1][ix2] = c;
+    acjs_paint[id]();
+    facelets_arr[fn] = color;
+    f.style.backgroundColor = color_str(color);
+    facelets = facelets_arr.join('');
+  }
 }
 function color_num(c) {
   if (c == 'W') return 10;
@@ -376,21 +376,32 @@ function help() {
   window.open('solver_help_nw.html');
 }
 function solve() {
-  if (solve_running == 1 || facelets == CUBE_HOME)
+  if (solve_running == 1) 
     return;
+  document.getElementById('status').style.textAlign = 'left';
+  if (facelets == CUBE_HOME) {
+    stat_msg('Cube already solved<br>No moves required ');
+    return;
+  }
+  if (facelets == CUBE_BLANK) {
+    var s= 'No colors have been entered, ';
+    s += 'color the cube layout before solving';
+    stat_msg(s);
+    return;
+  }
   var c = cvt_to_m2p(facelets);
   var s = document.getElementById('maxlen').value;
   var n = (!isNaN(s) ? Number(s) : 20);
   // var s = document.getElementById('pmax').value;
   // var p = (!isNaN(s) ? Number(s) : 10000);
-  var p = 10000; 
   solve_running = 1;
   logtxt.length = 0;
   var search = new min2phase.Search();
   document.getElementById('status').style.textAlign = 'left';
   if (n >= 20) {
     time1 = Date.now();
-    solution = search.solution(c, n, p);
+    // solution = search.solution(c, n, p);
+    solution = search.solution(c, n);
     ipc();
   }
   else {
@@ -398,7 +409,8 @@ function solve() {
     // delay search for stat msg to appear
     setTimeout(function(){
       time1 = Date.now();
-      solution = search.solution(c, n, p);
+      // solution = search.solution(c, n, p);
+      solution = search.solution(c, n);
       ipc()}, 10);
   }
 }

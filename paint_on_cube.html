@@ -59,7 +59,7 @@
                       style="background-color:green"> </td>
           <td>
             &nbsp;
-            <input id=paint_cube type=checkbox style="height:18px">
+            <input id=paint_cube type=checkbox style="height:18px" checked>
           </td>
         </tr>
       </table>
@@ -193,7 +193,6 @@ Chen Shuang's optimized version of Herbert Kociemba's two-phase algorithm.</p>
 <script>
 "use strict";
 var color;
-var style;
 var facelets;
 var facelets_arr = [];
 var back = 0;
@@ -229,7 +228,8 @@ function main() {
     if (typeof(p[1]) != 'undefined')
       window[p[0]] = p[1];
   }
-  if (document.referrer.indexOf('3ColorCube') > 0)
+  var ref = document.referrer;
+  if (ref.indexOf('3ColorCube') > 0 || ref.indexOf('m2p') > 0)
     back = 1;
   if (typeof(facelets) == 'undefined')
     facelets = CUBE_HOME;
@@ -360,11 +360,12 @@ function clera() {
   }
 }
 function help() {
-  window.open('solver_help2.html');
+  window.open('paint_on_cube_help.html');
 }
 function solve() {
   if (solve_running == 1) 
     return;
+  document.getElementById('status').style.textAlign = 'left';
   if (facelets == CUBE_HOME) {
     stat_msg('Cube already solved<br>No moves required ');
     return;
