@@ -1,0 +1,16 @@
+<!doctype html>
+<script src=min2phase.js></script>
+<script>
+var cubes = [
+'FRRBULLDBRFFURRLBDULUBFFFRUDBBDDDBRBULFULUDFLDDRFBLRUL',
+'BUBFUDDLRFFUBRFRDUFDULFUBRDUBBDDBFLLLRRRLBLRLRLDUBUFFD',
+'BRBDUDRFFRRULRFLFFFDDRFDBLBUBDUDLLUUDBURLUDBLRFRUBBLLF'];
+var search = new min2phase.Search();
+min2phase.initFull();
+for (var i=0; i < cubes.length; i++)  {
+  var c = cubes[i];
+  var s = search.solution(c, 20);
+  console.log(c + '\n' + s);
+}
+</script>
+</html>
